@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:s="library://ns.adobe.com/flex/spark" xmlns:fx="http://ns.adobe.com/mxml/2009" initialize="initNetConnection()" creationComplete="completed()" width="1" height="1">
+	<fx:Script>
+		<![CDATA[
+			import flash.external.ExternalInterface;
+			
+			
+			// url to adobe stratus
+			private var rtmfpUrl:String = "rtmfp://stratus.adobe.com";
+			private var developerKey:String = "7213269d085b883d6fc5dee1-87e92fe3cb94";
+			
+			// connection handle and own identifier
+			private var netConnection:NetConnection;
+			private var myId:String;
+			
+			// listener stream for incoming requests 
+			private var listenerStream:NetStream;
+			
+			// initialize an rtmfp connection to the adobe stratus server
+			private function initNetConnection():void
+			{ 
+				netConnection = new NetConnection();
+				netConnection.addEventListener(NetStatusEvent.NET_STATUS, netConnectionHandler);
+				netConnection.connect(rtmfpUrl + "/" + developerKey);
+				
+			}
+			
+			// after app is loaded, setup methods that are accessible through javascript
+			private function completed():void
+			{
+				if (ExternalInterface.available)
+				{
+					ExternalInterface.addCallback("getArticleFromFarStratusPeer", getArticleFromFarStratusPeer);
+				}
+			}
+			
+			// handler for net connection events
+			private function netConnectionHandler(vEvent:NetStatusEvent):void
+			{				
+				if(vEvent.info.code == "NetConnection.Connect.Success")
+				{
+					myId = netConnection.nearID;                            
+					
+					// tell Javascript to store my peer id in my java websocketworker
+					ExternalInterface.call("storeStratusId", myId);
+					
+					// start the control stream that will listen to incoming requests
+					listenerStream = new NetStream(netConnection, NetStream.DIRECT_CONNECTIONS);
+					listenerStream.addEventListener(NetStatusEvent.NET_STATUS, listenerHandler);
+					
+					var c:Object = new Object;
+					c.onPeerConnect = function(subscriber:NetStream):Boolean {						
+						var senderClient:DistriSenderClient = new DistriSenderClient(netConnection, subscriber.farID);
+						
+						return false;
+					};
+					listenerStream.client = c;
+					listenerStream.publish("control");
+				} 
+				else if(vEvent.info.code == "NetStream.Connect.Success")
+				{
+				}
+			}
+			
+			private function listenerHandler(event:NetStatusEvent):void
+			{
+			}
+			
+			// method is called from js to request an article from a far stratus peer
+			private function getArticleFromFarStratusPeer(farStratusId:String, article:String):void
+			{                       
+				var requesterClient:DistriRequesterClient = new DistriRequesterClient(netConnection, farStratusId, article);
+			}
+		]]>
+	</fx:Script>
+</s:Application>

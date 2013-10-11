@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>distripedia</title>
+
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="stylesheet" type="text/css" href="css/styles.css" />
+<script type="text/javascript" src="js/swfobject.js"></script>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/distripedia.js"></script>
+<script type="text/javascript" src="js/jScrollPane.js"></script>
+</head>
+<body>
+
+<noscript>
+<meta http-equiv="refresh" content="1; URL=no_js.html">
+</noscript>
+<div id="left-sidebar">
+	<img id="logo" onclick="getArticle(homepage); return false;" src="images/distripedia.gif" alt="distripedia" />
+	<form action="" onsubmit="search(); return false;" autocomplete="off" accept-charset="utf-8">
+		<input type="text" id="searchbox" /> <input type="submit" id="searchbtn" value="go" />
+	</form>	
+	
+	<br />
+    <div id="worker-info">
+    	<h2>my name</h2>
+    	<div id="worker-name"></div>
+    </div>
+	<div id="controls">
+	<h2>controls</h2>
+	<div id="websocket-control" class="disabled">
+		<a href="#" onclick="updateWebsocketState();">websockets</a>
+	</div>
+	
+	<div id="flash-control" class="disabled">
+		<a href="#" onclick="updateFlashState();">flash</a>
+	</div>
+	
+	<div id="server-log">
+		<a href="log" target="_blank" >server log</a>
+	</div>
+	</div>
+    
+    <div id="articles">
+	<h2>articles</h2>	
+	<ul>
+		<li><a href="#" onclick="getArticle('XNA'); return false;">XNA</a></li>
+		<li><a href="#" onclick="getArticle('Germany'); return false;">Germany</a></li>
+		<li><a href="#" onclick="getArticle('Pedia'); return false;">pedia</a></li>
+		<li><a href="#" onclick="getArticle('Paradise'); return false;">Paradise</a></li>
+	</ul>
+    </div>
+    
+	<h2 id="local-storage" onclick="toggleLocalStorage();">local storage</h2>
+	<div id="local-storage-control">
+		<a href="#" onclick="clearLocalStorage(); return false;">clear</a>
+        <div id="localstorage-content"></div>
+    </div>
+	
+</div>
+
+<div id="content"></div>
+<p id="flash-content"></p>
+
+<div id="footer">
+	<div id="log-control-btn" onclick="toggleLog();">&nbsp;</div>
+	<div id="log" class="scroll-pane"></div>
+</div>
+</body>
+</html>

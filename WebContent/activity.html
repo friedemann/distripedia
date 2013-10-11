@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>distripedia</title>
+
+<link rel="stylesheet" type="text/css" href="styles.css" />
+
+<script type="text/javascript" src="swfobject.js"></script>
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+
+<script type="text/javascript">
+var myWebSocket;
+
+$(document).ready(function() {
+	openSocket();	
+});
+
+
+function log(text) {
+	var currentTime = new Date();
+	var hours = currentTime.getHours();
+	var minutes = currentTime.getMinutes();
+	var seconds = currentTime.getSeconds();
+	var milisecs = currentTime.getMilliseconds();
+	
+	var timeString = hours + ":" + minutes + ":" + seconds + "-" + milisecs;
+
+	$("#content").append("&nbsp;&nbsp;" + timeString + " > " + text + "<br/>").attr({ scrollTop: $("#content").attr("scrollHeight") });
+}
+
+
+
+function openSocket(){
+	if (myWebSocket == null) {
+		try {
+			var host = window.location.host;
+			var idx = host.indexOf(':');
+			if (idx != -1)
+				host = host.substring(0, idx);
+            myWebSocket = new WebSocket("ws://" + host + ":8484");
+
+			
+			// send list of articles when connection is established
+			myWebSocket.onopen = function(evt){
+				log("websocket open");
+				
+			};
+			
+			myWebSocket.onerror = function(evt){
+				log("ws error: " + evt.data);
+			};
+			
+			myWebSocket.onmessage = function(evt){
+				log(evt.data);
+			};
+			
+			myWebSocket.onclose = function(evt){
+				log("websocket closed");
+			};
+		} 
+		catch (ex) {
+			log(ex);
+		}
+	}
+}
+
+</script>
+</head>
+<body>
+<div id="content"></div>
+</body>
+</html>

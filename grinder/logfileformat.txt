@@ -1,0 +1,5 @@
+#
+# the current log file format
+# @version 1.0
+#
+testID|timestamp|clientID|userID|browserID|browserType|requestStart|requestEnd|articleIDrequested|articleIDreceived|bytesReceived|[receivedFrom]
